@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="mk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Salary Calculator MK</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+        color: #333;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: 30px;
+        align-items: start;
+      }
+
+      .main-content {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      }
+
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .card h3 {
+        color: #4a5568;
+        margin-bottom: 15px;
+        font-size: 1.2rem;
+        border-bottom: 2px solid #e2e8f0;
+        padding-bottom: 10px;
+      }
+
+      .input-group {
+        margin-bottom: 20px;
+      }
+
+      .input-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #2d3748;
+        font-size: 0.9rem;
+      }
+
+      .input-group input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f7fafc;
+      }
+
+      .input-group input:focus {
+        outline: none;
+        border-color: #667eea;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      .readonly-input {
+        background: #edf2f7 !important;
+        cursor: not-allowed;
+        color: #4a5568;
+      }
+
+      .readonly-input:focus {
+        background: #edf2f7 !important;
+        border-color: #e2e8f0 !important;
+        box-shadow: none !important;
+      }
+
+      .section-title {
+        color: #2d3748;
+        margin: 30px 0 20px 0;
+        font-size: 1.4rem;
+        font-weight: 700;
+        position: relative;
+      }
+
+      .section-title::after {
+        content: "";
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        border-radius: 2px;
+      }
+
+      .calculate-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+        margin-top: 20px;
+      }
+
+      .calculate-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+      }
+
+      .calculate-btn:active {
+        transform: translateY(0);
+      }
+
+      .results {
+        margin-top: 30px;
+        padding: 25px;
+        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        border-radius: 15px;
+        border-left: 5px solid #667eea;
+      }
+
+      .result-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      .result-item:last-child {
+        border-bottom: none;
+      }
+
+      .result-label {
+        font-weight: 600;
+        color: #4a5568;
+        text-transform: capitalize;
+      }
+
+      .result-value {
+        font-weight: 700;
+        color: #2d3748;
+        font-size: 1.1rem;
+      }
+
+      .tutorial-item {
+        margin-bottom: 20px;
+        padding: 15px;
+        background: #f7fafc;
+        border-radius: 10px;
+        border-left: 4px solid #667eea;
+      }
+
+      .tutorial-item h4 {
+        color: #2d3748;
+        margin-bottom: 8px;
+        font-size: 1rem;
+      }
+
+      .tutorial-item p {
+        color: #4a5568;
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+
+      .constants-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+      }
+
+      .constant-item {
+        background: #f7fafc;
+        padding: 12px;
+        border-radius: 8px;
+        text-align: center;
+      }
+
+      .constant-label {
+        font-size: 0.8rem;
+        color: #718096;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .constant-value {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #2d3748;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      .header h1 {
+        color: #2d3748;
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .header p {
+        color: #718096;
+        font-size: 1.1rem;
+      }
+
+      @media (max-width: 1024px) {
+        .container {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+
+        .main-content {
+          padding: 30px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        body {
+          padding: 15px;
+        }
+
+        .main-content {
+          padding: 20px;
+        }
+
+        .header h1 {
+          font-size: 2rem;
+        }
+
+        .constants-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+
+    <script>
+      const rates = {
+        pension: 0.188,
+        health: 0.075,
+        unemployment: 0.012,
+        injury: 0.005,
+        income_tax: 0.1,
+
+        sick_1_7: 0.7,
+        sick_8_15: 0.8,
+        sick_16_30: 0.9,
+
+        sunday_premium: 0.5,
+        holiday_premium: 0.5,
+        night_premium: 0.35,
+        overtime_premium: 0.35,
+      };
+
+      function getHourlyGross(gross_salary, total_month_hours) {
+        return gross_salary / total_month_hours;
+      }
+
+      function calculateWorkedGross(worked_hours, hourly_gross) {
+        return worked_hours * hourly_gross;
+      }
+
+      function calculateSickLeaveGross(
+        sick_1_7,
+        sick_8_15,
+        sick_16_30,
+        hourly_gross
+      ) {
+        return (
+          sick_1_7 * hourly_gross * rates.sick_1_7 +
+          sick_8_15 * hourly_gross * rates.sick_8_15 +
+          sick_16_30 * hourly_gross * rates.sick_16_30
+        );
+      }
+
+      function calculatePremiums(
+        { sunday_hours, holiday_hours, night_hours, overtime_hours },
+        hourly_gross
+      ) {
+        return (
+          sunday_hours * hourly_gross * rates.sunday_premium +
+          holiday_hours * hourly_gross * rates.holiday_premium +
+          night_hours * hourly_gross * rates.night_premium +
+          overtime_hours * hourly_gross * rates.overtime_premium
+        );
+      }
+
+      function calculateContributions(total_gross) {
+        return {
+          pension: total_gross * rates.pension,
+          health: total_gross * rates.health,
+          unemployment: total_gross * rates.unemployment,
+          injury: total_gross * rates.injury,
+        };
+      }
+
+      function calculateIncomeTax(
+        total_gross,
+        total_contributions,
+        personal_allowance
+      ) {
+        const taxable_income = Math.max(
+          0,
+          total_gross - total_contributions - personal_allowance
+        );
+        return taxable_income * rates.income_tax;
+      }
+
+      function calculateWorkingHoursForMonth(year, month) {
+        // Get the first day of the month
+        const firstDay = new Date(year, month - 1, 1);
+        // Get the last day of the month
+        const lastDay = new Date(year, month, 0);
+
+        let workingDays = 0;
+        const currentDate = new Date(firstDay);
+
+        // Count working days (Monday = 1, Sunday = 0)
+        while (currentDate <= lastDay) {
+          const dayOfWeek = currentDate.getDay();
+          // Monday (1) to Friday (5) are working days
+          if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+            workingDays++;
+          }
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
+
+        // Standard 8-hour workday
+        return workingDays * 8;
+      }
+
+      function calculateNetSalary(
+        gross_salary,
+        worked_hours,
+        sick_1_7,
+        sick_8_15,
+        sick_16_30,
+        sunday_hours,
+        holiday_hours,
+        night_hours,
+        overtime_hours,
+        total_month_hours,
+        personal_allowance
+      ) {
+        const hourly_gross = getHourlyGross(gross_salary, total_month_hours);
+        const gross_work = calculateWorkedGross(worked_hours, hourly_gross);
+        const gross_sick = calculateSickLeaveGross(
+          sick_1_7,
+          sick_8_15,
+          sick_16_30,
+          hourly_gross
+        );
+        const gross_premiums = calculatePremiums(
+          { sunday_hours, holiday_hours, night_hours, overtime_hours },
+          hourly_gross
+        );
+
+        const total_gross = gross_work + gross_sick + gross_premiums;
+        const contributions = calculateContributions(total_gross);
+        const total_contributions =
+          contributions.pension +
+          contributions.health +
+          contributions.unemployment +
+          contributions.injury;
+
+        const income_tax = calculateIncomeTax(
+          total_gross,
+          total_contributions,
+          personal_allowance
+        );
+        const net_salary = total_gross - total_contributions - income_tax;
+
+        return {
+          hourly_gross,
+          gross_work,
+          gross_sick,
+          gross_premiums,
+          total_gross,
+          ...contributions,
+          total_contributions,
+          income_tax,
+          net_salary,
+        };
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        // Set default month to current month
+        const now = new Date();
+        const currentMonth =
+          now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
+        document.getElementById("month_picker").value = currentMonth;
+
+        // Calculate working hours for current month on page load
+        const [year, month] = currentMonth.split("-").map(Number);
+        const workingHours = calculateWorkingHoursForMonth(year, month);
+        document.getElementById("total_month_hours").value = workingHours;
+
+        // Add event listener for month picker
+        document
+          .getElementById("month_picker")
+          .addEventListener("change", (e) => {
+            const [year, month] = e.target.value.split("-").map(Number);
+            const workingHours = calculateWorkingHoursForMonth(year, month);
+            document.getElementById("total_month_hours").value = workingHours;
+          });
+
+        document.getElementById("calcBtn").addEventListener("click", () => {
+          const gross_salary =
+            parseFloat(document.getElementById("gross_salary").value) || 0;
+          const worked_hours =
+            parseFloat(document.getElementById("worked_hours").value) || 0;
+          const sick_1_7 =
+            parseFloat(document.getElementById("sick_1_7").value) || 0;
+          const sick_8_15 =
+            parseFloat(document.getElementById("sick_8_15").value) || 0;
+          const sick_16_30 =
+            parseFloat(document.getElementById("sick_16_30").value) || 0;
+          const sunday_hours =
+            parseFloat(document.getElementById("sunday_hours").value) || 0;
+          const holiday_hours =
+            parseFloat(document.getElementById("holiday_hours").value) || 0;
+          const night_hours =
+            parseFloat(document.getElementById("night_hours").value) || 0;
+          const overtime_hours =
+            parseFloat(document.getElementById("overtime_hours").value) || 0;
+          const total_month_hours =
+            parseFloat(document.getElementById("total_month_hours").value) || 0;
+          const personal_allowance =
+            parseFloat(document.getElementById("personal_allowance").value) ||
+            0;
+
+          if (total_month_hours === 0) {
+            alert("Please enter total monthly hours to calculate hourly rate.");
+            return;
+          }
+
+          const result = calculateNetSalary(
+            gross_salary,
+            worked_hours,
+            sick_1_7,
+            sick_8_15,
+            sick_16_30,
+            sunday_hours,
+            holiday_hours,
+            night_hours,
+            overtime_hours,
+            total_month_hours,
+            personal_allowance
+          );
+
+          const resultContainer = document.getElementById("result");
+          resultContainer.innerHTML = `
+          <div class="result-item">
+            <span class="result-label">Hourly Gross Rate</span>
+            <span class="result-value">${result.hourly_gross.toFixed(
+              2
+            )} MKD</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Gross Work</span>
+            <span class="result-value">${result.gross_work.toFixed(
+              2
+            )} MKD</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Gross Sick Leave</span>
+            <span class="result-value">${result.gross_sick.toFixed(
+              2
+            )} MKD</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Gross Premiums</span>
+            <span class="result-value">${result.gross_premiums.toFixed(
+              2
+            )} MKD</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Total Gross</span>
+            <span class="result-value">${result.total_gross.toFixed(
+              2
+            )} MKD</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Pension Contribution</span>
+            <span class="result-value">${result.pension.toFixed(2)} MKD</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Health Contribution</span>
+            <span class="result-value">${result.health.toFixed(2)} MKD</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Unemployment Contribution</span>
+            <span class="result-value">${result.unemployment.toFixed(
+              2
+            )} MKD</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Injury Contribution</span>
+            <span class="result-value">${result.injury.toFixed(2)} MKD</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Total Contributions</span>
+            <span class="result-value">${result.total_contributions.toFixed(
+              2
+            )} MKD</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Income Tax</span>
+            <span class="result-value">${result.income_tax.toFixed(
+              2
+            )} MKD</span>
+          </div>
+          <div class="result-item" style="border-top: 2px solid #667eea; margin-top: 10px; padding-top: 15px;">
+            <span class="result-label" style="font-size: 1.2rem;">Net Salary</span>
+            <span class="result-value" style="font-size: 1.3rem; color: #667eea;">${result.net_salary.toFixed(
+              2
+            )} MKD</span>
+          </div>
+        `;
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="main-content">
+        <div class="header">
+          <h1>Salary Calculator MK</h1>
+          <p>
+            Advanced Macedonian Payroll Calculator with Premiums & Deductions
+          </p>
+        </div>
+
+        <h2 class="section-title">Monthly Parameters</h2>
+        <div class="input-group">
+          <label for="personal_allowance">Personal Allowance (MKD)</label>
+          <input
+            id="personal_allowance"
+            type="number"
+            value="10270"
+            placeholder="Enter personal allowance"
+          />
+        </div>
+        <div class="input-group">
+          <label for="month_picker">Select Month</label>
+          <input id="month_picker" type="month" value="" />
+        </div>
+        <div class="input-group">
+          <label for="total_month_hours"
+            >Total Monthly Hours (Auto-calculated)</label
+          >
+          <input
+            id="total_month_hours"
+            type="number"
+            placeholder="Will be calculated automatically"
+            readonly
+            class="readonly-input"
+          />
+        </div>
+
+        <h2 class="section-title">Salary Information</h2>
+        <div class="input-group">
+          <label for="gross_salary">Gross Salary (MKD)</label>
+          <input
+            id="gross_salary"
+            type="number"
+            value="36000"
+            placeholder="Enter gross salary"
+          />
+        </div>
+        <div class="input-group">
+          <label for="worked_hours">Worked Hours</label>
+          <input
+            id="worked_hours"
+            type="number"
+            value="0"
+            placeholder="Enter worked hours"
+          />
+        </div>
+
+        <h2 class="section-title">Sick Leave (Working Hours)</h2>
+        <div class="input-group">
+          <label for="sick_1_7">1–7 Days</label>
+          <input
+            id="sick_1_7"
+            type="number"
+            value="0"
+            placeholder="Enter hours for days 1-7"
+          />
+        </div>
+        <div class="input-group">
+          <label for="sick_8_15">8–15 Days</label>
+          <input
+            id="sick_8_15"
+            type="number"
+            value="0"
+            placeholder="Enter hours for days 8-15"
+          />
+        </div>
+        <div class="input-group">
+          <label for="sick_16_30">16–30 Days</label>
+          <input
+            id="sick_16_30"
+            type="number"
+            value="0"
+            placeholder="Enter hours for days 16-30"
+          />
+        </div>
+
+        <h2 class="section-title">Premium Hours</h2>
+        <div class="input-group">
+          <label for="sunday_hours">Sunday Hours</label>
+          <input
+            id="sunday_hours"
+            type="number"
+            value="0"
+            placeholder="Enter Sunday hours"
+          />
+        </div>
+        <div class="input-group">
+          <label for="holiday_hours">Holiday Hours</label>
+          <input
+            id="holiday_hours"
+            type="number"
+            value="0"
+            placeholder="Enter holiday hours"
+          />
+        </div>
+        <div class="input-group">
+          <label for="night_hours">Night Shift Hours</label>
+          <input
+            id="night_hours"
+            type="number"
+            value="0"
+            placeholder="Enter night shift hours"
+          />
+        </div>
+        <div class="input-group">
+          <label for="overtime_hours">Overtime Hours</label>
+          <input
+            id="overtime_hours"
+            type="number"
+            value="0"
+            placeholder="Enter overtime hours"
+          />
+        </div>
+
+        <button id="calcBtn" class="calculate-btn">Calculate Salary</button>
+
+        <div id="result" class="results" style="display: none"></div>
+      </div>
+
+      <div class="sidebar">
+        <div class="card">
+          <h3>Field Tutorial</h3>
+          <div class="tutorial-item">
+            <h4>Personal Allowance</h4>
+            <p>
+              Monthly tax-free amount that reduces taxable income. Currently set
+              to 10,270 MKD as per Macedonian tax law.
+            </p>
+          </div>
+          <div class="tutorial-item">
+            <h4>Month Selection</h4>
+            <p>
+              Select any month to automatically calculate working hours. The
+              calculator counts weekdays (Monday-Friday) and multiplies by 8
+              hours per day.
+            </p>
+          </div>
+          <div class="tutorial-item">
+            <h4>Total Monthly Hours</h4>
+            <p>
+              Automatically calculated based on selected month. Shows total
+              working hours excluding weekends. Used to calculate hourly gross
+              rate.
+            </p>
+          </div>
+          <div class="tutorial-item">
+            <h4>Gross Salary</h4>
+            <p>
+              Base monthly salary before any deductions or additions. This is
+              your contract salary.
+            </p>
+          </div>
+          <div class="tutorial-item">
+            <h4>Worked Hours</h4>
+            <p>
+              Actual hours worked during the month. If less than total monthly
+              hours, salary is proportionally reduced.
+            </p>
+          </div>
+          <div class="tutorial-item">
+            <h4>Sick Leave Categories</h4>
+            <p>
+              Different compensation rates apply based on sick leave duration:
+              70% (1-7 days), 80% (8-15 days), 90% (16-30 days).
+            </p>
+          </div>
+          <div class="tutorial-item">
+            <h4>Premium Hours</h4>
+            <p>
+              Additional compensation for special working conditions: Sunday
+              (50%), Holiday (50%), Night (35%), Overtime (35%).
+            </p>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Tax Rates & Constants</h3>
+          <div class="constants-grid">
+            <div class="constant-item">
+              <div class="constant-label">Pension</div>
+              <div class="constant-value">18.8%</div>
+            </div>
+            <div class="constant-item">
+              <div class="constant-label">Health</div>
+              <div class="constant-value">7.5%</div>
+            </div>
+            <div class="constant-item">
+              <div class="constant-label">Unemployment</div>
+              <div class="constant-value">1.2%</div>
+            </div>
+            <div class="constant-item">
+              <div class="constant-label">Injury</div>
+              <div class="constant-value">0.5%</div>
+            </div>
+            <div class="constant-item">
+              <div class="constant-label">Income Tax</div>
+              <div class="constant-value">10%</div>
+            </div>
+            <div class="constant-item">
+              <div class="constant-label">Sick 1-7</div>
+              <div class="constant-value">70%</div>
+            </div>
+            <div class="constant-item">
+              <div class="constant-label">Sick 8-15</div>
+              <div class="constant-value">80%</div>
+            </div>
+            <div class="constant-item">
+              <div class="constant-label">Sick 16-30</div>
+              <div class="constant-value">90%</div>
+            </div>
+            <div class="constant-item">
+              <div class="constant-label">Sunday</div>
+              <div class="constant-value">50%</div>
+            </div>
+            <div class="constant-item">
+              <div class="constant-label">Holiday</div>
+              <div class="constant-value">50%</div>
+            </div>
+            <div class="constant-item">
+              <div class="constant-label">Night</div>
+              <div class="constant-value">35%</div>
+            </div>
+            <div class="constant-item">
+              <div class="constant-label">Overtime</div>
+              <div class="constant-value">35%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Developer Integration</h3>
+          <div class="tutorial-item">
+            <h4>JavaScript Module</h4>
+            <p>
+              All calculation functions are available as pure JavaScript
+              functions. Import the rates object and calculation functions into
+              your application.
+            </p>
+          </div>
+          <div class="tutorial-item">
+            <h4>Key Functions</h4>
+            <p>
+              <code>calculateNetSalary()</code> - Main calculation function<br />
+              <code>calculateContributions()</code> - Social contributions<br />
+              <code>calculatePremiums()</code> - Premium calculations
+            </p>
+          </div>
+          <div class="tutorial-item">
+            <h4>Rates Object</h4>
+            <p>
+              All tax rates and premiums are stored in the
+              <code>rates</code> object for easy maintenance and updates.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Show results container when calculation is performed
+      document.getElementById("calcBtn").addEventListener("click", function () {
+        document.getElementById("result").style.display = "block";
+      });
+    </script>
+  </body>
+</html>
